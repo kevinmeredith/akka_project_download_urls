@@ -10,6 +10,6 @@ object DownloadMain {
 	val actor = system.actorOf(Props[DownloadActor], "Downloader")
 
 	def main(args: Array[String]) {
-		actor ! new URL("https://www.google.com")
+		actor ! new URL("http://www.cis.upenn.edu/~matuszek/index.html")
 	}
 }
