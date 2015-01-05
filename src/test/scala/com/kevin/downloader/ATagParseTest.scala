@@ -10,6 +10,6 @@ class ATagParseTest extends FlatSpec {
 		val url: URL = new URL("http://www.cis.upenn.edu/~matuszek/index.html")
 		val result = getValidATags(url)
 		println("printing results...")
-		println( result.flatMap(x => List("FOOO" + x)) )
+		println( result.flatMap(x => List(x)) )
 	}
 }

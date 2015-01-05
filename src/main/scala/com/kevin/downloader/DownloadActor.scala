@@ -20,13 +20,13 @@ object DownloadActor {
 	}
 
 	def getValidATags(url: URL): List[String] = {
-		val urlContent           				= getUrlContent(url)
-		val aTags: List[String] 			    = urlContent.split("<a href=\"").toList
-		val matchingATags: List[Option[String]] = aTags.map(x => HTML_PATTERN_REGEX.findFirstIn(x))
-		val flattened: List[String]             = matchingATags.flatten 
-		//flattened.map(x => x.takeWhile(y => y != '"')) // keep until reaching the ending quote of the URL
-		// TODO: use above (line 27) appproach, but simply split on "a href = ...", and then do `takeWhile`
-		flattened
+		val urlContent           				   = getUrlContent(url)
+		val aTags: List[String] 				   = urlContent.split("<a href=\"").toList
+		val matchingATags: List[String] 		   = aTags.map(x => x.takeWhile(y => y != '"'))
+		val removedDocTypeAndHashes: List[String]  = matchingATags.filter{ 
+			                                                x => !x.contains("DOCTYPE") && !x.toLowerCase.startsWith("http") && !x.contains("#")
+													 }
+	    removedDocTypeAndHashes
 	}
 
 }
