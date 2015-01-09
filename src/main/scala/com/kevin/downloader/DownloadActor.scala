@@ -10,6 +10,8 @@ import org.apache.commons.io.IOUtils
 
 object DownloadActor {
 
+	case class DownloadUrl(relativePath: String)
+
     private def getUrlContent(url: URL): String = {
 		println("reading url: " + url)
 		val inputStream = url.openStream
@@ -18,14 +20,14 @@ object DownloadActor {
 
 	// TODO: download PNGs as well
 
-	def getValidATags(url: URL): List[(String, Int)] = {
+	def getValidATags(url: URL): List[String] = {
 		val urlContent           				   = getUrlContent(url)
 		val aTags: List[String] 				   = urlContent.split("<a href=\"").toList
 		val matchingATags: List[String] 		   = aTags.map(x => x.takeWhile(y => y != '"'))
 		val removedDocTypeAndHashes: List[String]  = matchingATags.filter{ 
 			                                                x => !x.contains("DOCTYPE") && !x.toLowerCase.startsWith("http") && !x.contains("#")
 													 }
-	    removedDocTypeAndHashes.zipWithIndex
+	    removedDocTypeAndHashes
 	}
 
 }
@@ -40,7 +42,7 @@ class DownloadActor extends Actor with ActorLogging {
 		case url: URL => {
 			val htmlsInPage: List[(String, Int)] = getValidATags(url)
 			log.info(s"found ${htmlsInPage.length} for the url: $url")
-			htmlsInPage.foreach(router ! _)
+			htmlsInPage.foreach(router ! DownloadUrl(_, url) )
 		}
 		case x        => log.error(s"error. Couldn't match $x to `url`")
 	}
