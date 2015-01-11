@@ -5,11 +5,13 @@ import java.net.URL
 
 object DownloadMain {
 
+	import Common.DOWNLOAD_URL
+
 	val system = ActorSystem("Downloader")
 
 	val actor = system.actorOf(Props[DownloadActor], "DownloadActor")
 
 	def main(args: Array[String]) {
-		actor ! new URL("http://www.cis.upenn.edu/~matuszek/index.html")
+		actor ! new URL(DOWNLOAD_URL)
 	}
 }

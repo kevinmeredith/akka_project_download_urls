@@ -4,7 +4,7 @@ import akka.actor.{Actor, Props, ActorSystem, ActorLogging}
 import akka.routing.FromConfig
 import scala.util.matching.Regex
 import java.net.URL
-import java.io.InputStream
+import java.io.{File, InputStream}
 
 object DownloadActor {
 
@@ -34,10 +34,11 @@ class DownloadActor extends Actor with ActorLogging {
 	def receive  = {
 		case url: URL => {
 			val htmlsInPage: List[String] = getValidATags(url)
+			val parentPath: String        = new File( url.toString ).toPath.getParent.toString + "/"
 			log.info(s"found ${htmlsInPage.length} for the url: $url")
-			htmlsInPage.foreach(router ! DownloadUrl(_) )
+			htmlsInPage.foreach(router ! DownloadUrl(parentPath.replaceAll("/", "//"), _) )
 		}
-		case x        => log.error(s"error. Couldn't match $x to `url`")
+		case fail     => log.error(s"error. Couldn't match $fail to `url`")
 	}
 	
 }
